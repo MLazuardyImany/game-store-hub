@@ -5,6 +5,9 @@ import { formatRupiah, toIdrNumber } from "@/lib/currency";
 import { prisma } from "@/lib/db";
 import { createRankAction, deleteRateAction, upsertRateAction } from "../actions";
 
+/** Halaman admin membaca DB saat request; blokir sampai data siap. */
+export const instant = false;
+
 const FIELD =
   "min-h-9 w-full rounded-lg border border-line bg-backdrop/70 px-2 text-xs text-ink outline-none focus:border-accent/60";
 

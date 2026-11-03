@@ -6,6 +6,9 @@ import { StatusToggle } from "@/components/admin/status-toggle";
 import { formatRupiah, toIdrNumber } from "@/lib/currency";
 import { prisma } from "@/lib/db";
 
+/** Halaman admin membaca DB saat request; blokir sampai data siap. */
+export const instant = false;
+
 export default async function AdminAccountsPage() {
   await connection();
 

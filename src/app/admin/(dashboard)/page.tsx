@@ -3,6 +3,9 @@ import { connection } from "next/server";
 import { toIdrNumber } from "@/lib/currency";
 import { prisma } from "@/lib/db";
 
+/** Halaman admin membaca DB saat request; blokir sampai data siap. */
+export const instant = false;
+
 /** Ringkasan angka untuk dashboard admin. */
 export default async function AdminHomePage() {
   await connection();

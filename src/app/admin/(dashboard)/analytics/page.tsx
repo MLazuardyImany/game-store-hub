@@ -3,6 +3,9 @@ import { connection } from "next/server";
 import { formatRupiah, toIdrNumber } from "@/lib/currency";
 import { prisma } from "@/lib/db";
 
+/** Halaman admin membaca DB saat request; blokir sampai data siap. */
+export const instant = false;
+
 const CHANNEL_LABEL: Record<string, string> = {
   WHATSAPP: "WhatsApp",
   TELEGRAM: "Telegram",

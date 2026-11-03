@@ -3,6 +3,9 @@ import { connection } from "next/server";
 import { AccountForm } from "@/components/admin/account-form";
 import { prisma } from "@/lib/db";
 
+/** Halaman admin membaca DB saat request; blokir sampai data siap. */
+export const instant = false;
+
 export default async function NewAccountPage() {
   await connection();
 

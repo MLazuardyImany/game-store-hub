@@ -4,6 +4,9 @@ import { Trash2 } from "lucide-react";
 import { prisma } from "@/lib/db";
 import { createGameAction, deleteGameAction, updateGameAction } from "../actions";
 
+/** Halaman admin membaca DB saat request; blokir sampai data siap. */
+export const instant = false;
+
 const FIELD =
   "min-h-11 w-full rounded-lg border border-line bg-backdrop/70 px-3 text-sm text-ink outline-none focus:border-accent/60";
 
