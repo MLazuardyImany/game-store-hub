@@ -45,6 +45,7 @@ next-env.d.ts
 /.npm-cache/
 /.appdata/
 /.dsh-acl-recovery/
+/.pgtest/
 
 # Prisma — client hasil generate (dibuat ulang oleh `npm run db:generate`)
 /src/generated/prisma

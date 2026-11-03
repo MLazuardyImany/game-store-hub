@@ -53,8 +53,11 @@ src/
 
 ## Database & Migrasi (Prisma 7)
 
-- Skema: `prisma/schema.prisma` — tabel `games`, `accounts`, `account_images`, `boosting_rates`,
-  `inquiry_logs`, dan `admin_users`, plus enum `AccountStatus` & `InquiryChannel`.
+- Skema: `prisma/schema.prisma` — tabel `games`, `ranks`, `accounts`, `account_images`,
+  `boosting_rates`, `inquiry_logs`, dan `admin_users`, plus enum `AccountStatus` & `InquiryChannel`.
+- `ranks` adalah master peringkat per game dengan `rank_order`; `boosting_rates` mereferensikan
+  rank lewat FK, sehingga tarif bisa dijumlahkan sekuensial dari rank awal ke target tanpa
+  mengisi matriks semua pasangan rank.
 - `DATABASE_URL` dibaca dari `.env.local` melalui `prisma7.config.ts` (satu sumber env dengan Next.js).
 - Prisma 7 memakai **driver adapter** `@prisma/adapter-pg`; client singleton ada di `src/lib/db.ts`.
 - Client Prisma di-generate ke `src/generated/prisma` (tidak di-commit).
@@ -65,10 +68,22 @@ src/
 | `npm run db:migrate` | Buat & terapkan migrasi (dev) |
 | `npm run db:deploy` | Terapkan migrasi yang ada (produksi/CI) |
 | `npm run db:status` | Cek status migrasi terhadap database |
+| `npm run db:seed` | Isi data contoh (idempotent) |
 | `npm run db:studio` | Buka Prisma Studio |
 
-Migrasi awal sudah tersedia di `prisma/migrations/*_init/migration.sql`. Setelah `DATABASE_URL`
-menunjuk database yang hidup, jalankan `npm run db:deploy` (atau `db:migrate` untuk development).
+Migrasi awal ada di `prisma/migrations/*_init/migration.sql`. Setelah `DATABASE_URL` menunjuk
+database yang hidup, jalankan `npm run db:deploy` lalu `npm run db:seed`.
+
+## API dasar
+
+| Endpoint | Fungsi |
+| :--- | :--- |
+| `GET /api/v1/games` | Daftar kategori game + jumlah stok READY per game |
+| `GET /api/v1/accounts` | Katalog stok; query: `game`, `search`, `min_price`, `max_price`, `status`, `sort`, `page`, `limit` |
+| `GET /api/v1/accounts/:stock_id` | Detail satu stok + seluruh screenshot (404 bila tidak ada) |
+
+Semua handler memakai `await connection()` sehingga selalu dirender saat request (bukan
+di-prerender saat build) karena membaca database.
 
 ## Konvensi yang wajib diikuti
 
@@ -83,6 +98,7 @@ Dokumen acuan lengkap ada di `PRD/`, `ARCHITECTURE/`, `AGENTS/`, `SKILL/`, `WORK
 
 ## Status
 
-Fase 1 (setup repositori & environment) selesai: Next.js App Router + TypeScript, Tailwind v4 dengan
-token tema gelap, paket esensial, konfigurasi environment, serta skema Prisma + migrasi awal.
-Langkah berikutnya: seed data awal dan helper backend (R2, format Rupiah, CTA, webhook).
+Fase 1 selesai: Next.js App Router + TypeScript, Tailwind v4 (token tema gelap), environment,
+skema Prisma + migrasi awal. Sebagian Fase 2 selesai: master rank & tarif boosting, seed data
+contoh (4 game, 31 rank, 27 tarif, 8 stok), dan tiga endpoint API baca.
+Langkah berikutnya: helper R2, format Rupiah, CTA, webhook, lalu UI katalog.

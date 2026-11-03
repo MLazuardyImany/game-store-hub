@@ -48,14 +48,26 @@ CREATE TABLE "account_images" (
 );
 
 -- CreateTable
-CREATE TABLE "boosting_rates" (
+CREATE TABLE "ranks" (
     "id" UUID NOT NULL,
     "game_id" UUID NOT NULL,
-    "from_rank" VARCHAR(50) NOT NULL,
-    "to_rank" VARCHAR(50) NOT NULL,
+    "name" VARCHAR(50) NOT NULL,
+    "rank_order" INTEGER NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "ranks_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "boosting_rates" (
+    "id" UUID NOT NULL,
+    "from_rank_id" UUID NOT NULL,
+    "to_rank_id" UUID NOT NULL,
     "price_per_unit_idr" DECIMAL(10,2) NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
+    "gameId" UUID,
 
     CONSTRAINT "boosting_rates_pkey" PRIMARY KEY ("id")
 );
@@ -104,10 +116,22 @@ CREATE INDEX "accounts_created_at_idx" ON "accounts"("created_at" DESC);
 CREATE INDEX "account_images_account_id_display_order_idx" ON "account_images"("account_id", "display_order");
 
 -- CreateIndex
-CREATE INDEX "boosting_rates_game_id_idx" ON "boosting_rates"("game_id");
+CREATE INDEX "ranks_game_id_rank_order_idx" ON "ranks"("game_id", "rank_order");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "boosting_rates_game_id_from_rank_to_rank_key" ON "boosting_rates"("game_id", "from_rank", "to_rank");
+CREATE UNIQUE INDEX "ranks_game_id_name_key" ON "ranks"("game_id", "name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "ranks_game_id_rank_order_key" ON "ranks"("game_id", "rank_order");
+
+-- CreateIndex
+CREATE INDEX "boosting_rates_from_rank_id_idx" ON "boosting_rates"("from_rank_id");
+
+-- CreateIndex
+CREATE INDEX "boosting_rates_to_rank_id_idx" ON "boosting_rates"("to_rank_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "boosting_rates_from_rank_id_to_rank_id_key" ON "boosting_rates"("from_rank_id", "to_rank_id");
 
 -- CreateIndex
 CREATE INDEX "inquiry_logs_account_id_created_at_idx" ON "inquiry_logs"("account_id", "created_at" DESC);
@@ -125,7 +149,16 @@ ALTER TABLE "accounts" ADD CONSTRAINT "accounts_game_id_fkey" FOREIGN KEY ("game
 ALTER TABLE "account_images" ADD CONSTRAINT "account_images_account_id_fkey" FOREIGN KEY ("account_id") REFERENCES "accounts"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "boosting_rates" ADD CONSTRAINT "boosting_rates_game_id_fkey" FOREIGN KEY ("game_id") REFERENCES "games"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "ranks" ADD CONSTRAINT "ranks_game_id_fkey" FOREIGN KEY ("game_id") REFERENCES "games"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "boosting_rates" ADD CONSTRAINT "boosting_rates_from_rank_id_fkey" FOREIGN KEY ("from_rank_id") REFERENCES "ranks"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "boosting_rates" ADD CONSTRAINT "boosting_rates_to_rank_id_fkey" FOREIGN KEY ("to_rank_id") REFERENCES "ranks"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "boosting_rates" ADD CONSTRAINT "boosting_rates_gameId_fkey" FOREIGN KEY ("gameId") REFERENCES "games"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "inquiry_logs" ADD CONSTRAINT "inquiry_logs_account_id_fkey" FOREIGN KEY ("account_id") REFERENCES "accounts"("id") ON DELETE CASCADE ON UPDATE CASCADE;

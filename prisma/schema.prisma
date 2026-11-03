@@ -16,6 +16,10 @@
 //    direkam pada `inquiry_logs` saat CTA diklik.
 // 5. `admin_users` tidak ada di ERD, tetapi dibutuhkan PRD 06 §1 (login
 //    admin dengan password ter-hash Bcrypt).
+// 6. Tabel master `ranks` + kolom `rank_order` ditambahkan (keputusan
+//    pemilik proyek) agar tarif bisa dijumlahkan sekuensial dari rank
+//    awal ke rank target, tanpa mengisi matriks semua pasangan rank.
+//    `boosting_rates` memakai FK ke `ranks`, bukan string nama rank.
 // =====================================================================
 
 generator client {
@@ -53,6 +57,7 @@ model Game {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   accounts      Account[]
+  ranks         Rank[]
   boostingRates BoostingRate[]
 
   @@index([name])
@@ -100,22 +105,51 @@ model AccountImage {
   @@map("account_images")
 }
 
-/// Matriks tarif jasa boosting per game (ERD: tabel `boosting_rates`).
-/// Satu baris = harga per unit (bintang/level) untuk satu segmen rank.
+/// Master peringkat (rank/tier) per game.
+/// `rank_order` memberi urutan sekuensial sehingga kalkulator bisa
+/// menjumlahkan tarif dari rank awal ke rank target tanpa matriks
+/// kombinasi manual (keputusan desain #6 di header).
+model Rank {
+  id        String   @id @default(uuid()) @db.Uuid
+  gameId    String   @map("game_id") @db.Uuid
+  name      String   @db.VarChar(50)
+  rankOrder Int      @map("rank_order")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  game Game @relation(fields: [gameId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  segmentsFrom BoostingRate[] @relation("RateFromRank")
+  segmentsTo   BoostingRate[] @relation("RateToRank")
+
+  /// Nama rank unik dalam satu game, dan urutannya pun harus unik.
+  @@unique([gameId, name])
+  @@unique([gameId, rankOrder])
+  @@index([gameId, rankOrder])
+  @@map("ranks")
+}
+
+/// Tarif jasa boosting per segmen rank (ERD: tabel `boosting_rates`).
+/// Satu baris = harga per unit (bintang/level) untuk transisi
+/// `fromRank` → `toRank`. Referensi berupa FK agar nama rank yang
+/// di-rename admin tidak memutus data tarif.
 model BoostingRate {
   id              String   @id @default(uuid()) @db.Uuid
-  gameId          String   @map("game_id") @db.Uuid
-  fromRank        String   @map("from_rank") @db.VarChar(50)
-  toRank          String   @map("to_rank") @db.VarChar(50)
+  fromRankId      String   @map("from_rank_id") @db.Uuid
+  toRankId        String   @map("to_rank_id") @db.Uuid
   pricePerUnitIdr Decimal  @map("price_per_unit_idr") @db.Decimal(10, 2)
   createdAt       DateTime @default(now()) @map("created_at")
   updatedAt       DateTime @updatedAt @map("updated_at")
 
-  game Game @relation(fields: [gameId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  fromRank Rank    @relation("RateFromRank", fields: [fromRankId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  toRank   Rank    @relation("RateToRank", fields: [toRankId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  game     Game?   @relation(fields: [gameId], references: [id])
+  gameId   String? @db.Uuid
 
   /// Satu kombinasi rank awal → tujuan hanya boleh punya satu tarif.
-  @@unique([gameId, fromRank, toRank])
-  @@index([gameId])
+  @@unique([fromRankId, toRankId])
+  @@index([fromRankId])
+  @@index([toRankId])
   @@map("boosting_rates")
 }
 

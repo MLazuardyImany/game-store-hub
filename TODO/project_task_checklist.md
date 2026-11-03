@@ -36,10 +36,10 @@
   - [ ] Create URL encoder for WhatsApp (`wa.me/?text=...`) and Telegram (`t.me/?text=...`).
   - [ ] Implement asynchronous Discord Embed & Telegram Bot Webhook trigger functions.
 
-- [ ] **Database Seed Script (`prisma/seed.ts`)**
-  - [ ] Seed initial game categories (Mobile Legends, Valorant, Genshin Impact, Free Fire).
-  - [ ] Seed dummy stock accounts with multiple screenshot URLs.
-  - [ ] Seed initial boosting rate matrices.
+- [x] **Database Seed Script (`prisma/seed.ts`)**
+  - [x] Seed initial game categories (Mobile Legends, Valorant, Genshin Impact, Free Fire).
+  - [x] Seed dummy stock accounts with multiple screenshot URLs.
+  - [x] Seed initial boosting rate matrices.
 
 ---
 
