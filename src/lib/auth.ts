@@ -2,6 +2,7 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { connection } from "next/server";
 import { compare } from "bcryptjs";
 
 /**
@@ -37,12 +38,13 @@ function encodeSegment(value: unknown): string {
   return Buffer.from(JSON.stringify(value)).toString("base64url");
 }
 
-export function signSession(username: string, now = Date.now()): string {
+export function signSession(username: string, now?: number): string {
+  const issuedAt = now ?? Date.now();
   const header = encodeSegment({ alg: "HS256", typ: "JWT" });
   const payload = encodeSegment({
     sub: username,
-    iat: Math.floor(now / 1000),
-    exp: Math.floor((now + SESSION_TTL_MS) / 1000),
+    iat: Math.floor(issuedAt / 1000),
+    exp: Math.floor((issuedAt + SESSION_TTL_MS) / 1000),
   } satisfies SessionPayload);
 
   const signature = createHmac("sha256", secret())
@@ -52,7 +54,8 @@ export function signSession(username: string, now = Date.now()): string {
   return `${header}.${payload}.${signature}`;
 }
 
-export function verifySession(token: string, now = Date.now()): SessionPayload | null {
+export function verifySession(token: string, now?: number): SessionPayload | null {
+  const currentTime = now ?? Date.now();
   const parts = token.split(".");
   if (parts.length !== 3) return null;
 
@@ -69,7 +72,7 @@ export function verifySession(token: string, now = Date.now()): SessionPayload |
 
   try {
     const decoded = JSON.parse(Buffer.from(payload, "base64url").toString()) as SessionPayload;
-    if (!decoded.sub || decoded.exp * 1000 <= now) return null;
+    if (!decoded.sub || decoded.exp * 1000 <= currentTime) return null;
     return decoded;
   } catch {
     return null;
@@ -92,8 +95,10 @@ export function adminUsername(): string {
   return process.env.ADMIN_USERNAME ?? "admin";
 }
 
-/** Sesi aktif dari cookie, atau null. */
+/** Sesi aktif dari cookie, atau null. Selalu dirender saat request. */
 export async function getSession(): Promise<SessionPayload | null> {
+  await connection();
+
   const store = await cookies();
   const token = store.get(SESSION_COOKIE)?.value;
   if (!token) return null;
