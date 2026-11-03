@@ -19,14 +19,18 @@ function normalizePhone(raw: string | undefined): string {
   return digits;
 }
 
+/** Nomor WhatsApp siap pakai (format internasional tanpa "+"). */
+export function whatsAppNumber(): string {
+  return normalizePhone(process.env.NEXT_PUBLIC_WHATSAPP_NUMBER);
+}
+
 function normalizeTelegram(raw: string | undefined): string {
   const handle = (raw ?? "").replace(/^@+/, "").trim();
   return handle.length > 0 ? handle : FALLBACK_TELEGRAM;
 }
 
 export function buildWhatsAppUrl(message: string): string {
-  const phone = normalizePhone(process.env.NEXT_PUBLIC_WHATSAPP_NUMBER);
-  return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+  return `https://wa.me/${whatsAppNumber()}?text=${encodeURIComponent(message)}`;
 }
 
 export function buildTelegramUrl(message: string): string {

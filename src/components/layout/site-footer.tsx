@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { ShieldCheck } from "lucide-react";
 
+import { whatsAppNumber } from "@/lib/cta";
+
 /** Dihitung sekali saat modul dimuat, bukan di dalam render (aman untuk prerender). */
 const CURRENT_YEAR = new Date().getFullYear();
 
@@ -40,7 +42,7 @@ export function SiteFooter() {
               <li>
                 <a
                   className="text-ink-muted transition hover:text-accent-emerald"
-                  href={`https://wa.me/${whatsapp.replace(/\D/g, "")}`}
+                  href={`https://wa.me/${whatsAppNumber()}`}
                   target="_blank"
                   rel="noreferrer noopener"
                 >
