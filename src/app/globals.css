@@ -1,0 +1,91 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens — Modern Dark Gaming theme.
+ * Sumber: PRD 07 (palette), AGENTS.md §5 (visual theme).
+ * Semua warna dipakai lewat utility Tailwind (bg-obsidian, text-ink, ...),
+ * bukan hardcode hex di komponen.
+ */
+@theme {
+  /* Latar */
+  --color-obsidian: #090d16;
+  --color-backdrop: #0f172a;
+  --color-surface: #1e293b;
+  --color-surface-raised: #24324a;
+  --color-line: #334155;
+
+  /* Aksen */
+  --color-accent: #06b6d4;
+  --color-accent-emerald: #10b981;
+  --color-accent-violet: #8b5cf6;
+  --color-accent-danger: #ef4444;
+
+  /* Teks */
+  --color-ink: #f8fafc;
+  --color-ink-muted: #94a3b8;
+
+  /* Tipografi — system stack: nol request font eksternal, tanpa layout shift */
+  --font-sans: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial,
+    "Noto Sans", sans-serif;
+  --font-mono: "Cascadia Code", "SFMono-Regular", Consolas, "Liberation Mono",
+    monospace;
+
+  /* Bentuk & efek */
+  --radius-card: 1rem;
+  --radius-pill: 999px;
+  --shadow-glow-accent: 0 1px 0 0 rgb(6 182 212 / 0.35),
+    0 18px 48px -24px rgb(6 182 212 / 0.55);
+  --shadow-card: 0 1px 0 0 rgb(248 250 252 / 0.04),
+    0 24px 60px -32px rgb(2 6 23 / 0.9);
+}
+
+@layer base {
+  html {
+    /* Tema gelap permanen: tidak ada mode terang (PRD 07). */
+    color-scheme: dark;
+    scrollbar-color: var(--color-line) var(--color-obsidian);
+  }
+
+  body {
+    background-color: var(--color-obsidian);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    min-height: 100dvh;
+  }
+
+  ::selection {
+    background-color: var(--color-accent);
+    color: var(--color-obsidian);
+  }
+
+  /* Target sentuh minimal 44px (PRD 11 §2) */
+  :where(a, button, [role="button"]) {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  :where(a, button, input, select, textarea):focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@utility bg-grid-faint {
+  /* Overlay grid halus untuk hero, murni dekoratif. */
+  background-image:
+    linear-gradient(to right, rgb(148 163 184 / 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(148 163 184 / 0.06) 1px, transparent 1px);
+  background-size: 56px 56px;
+}
