@@ -13,7 +13,9 @@
     "db:deploy": "prisma migrate deploy",
     "db:status": "prisma migrate status",
     "db:seed": "tsx prisma/seed.ts",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "arch:serve": "node scripts/archify-serve.mjs",
+    "arch:watch": "node scripts/archify-watch.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1161.0",
