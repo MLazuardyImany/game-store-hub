@@ -50,6 +50,7 @@ export function AccountForm({
   const [uploading, setUploading] = useState(false);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<string[]>([]);
   const [notice, setNotice] = useState<string | null>(null);
 
   function updateSpec(index: number, patch: Partial<{ key: string; value: string }>) {
@@ -113,12 +114,33 @@ export function AccountForm({
     event.preventDefault();
     setPending(true);
     setError(null);
+    setFieldErrors([]);
+
+    const cleanPrice = Number(priceIdr.replace(/[^\d]/g, ""));
+
+    if (!gameId) {
+      setError("Pilih game terlebih dahulu.");
+      setPending(false);
+      return;
+    }
+
+    if (!Number.isFinite(cleanPrice) || cleanPrice <= 0) {
+      setError("Harga wajib diisi dan lebih dari 0.");
+      setPending(false);
+      return;
+    }
+
+    if (!/^[A-Za-z0-9-]{3,50}$/.test(stockId.trim().toUpperCase())) {
+      setError("ID stok hanya boleh huruf, angka, dan tanda hubung (3–50 karakter).");
+      setPending(false);
+      return;
+    }
 
     const payload = {
       stockId: stockId.trim().toUpperCase(),
       gameId,
       title: title.trim(),
-      priceIdr: Number(priceIdr.replace(/[^\d]/g, "")),
+      priceIdr: cleanPrice,
       status,
       description: description.trim() || null,
       specs: Object.fromEntries(
@@ -139,9 +161,19 @@ export function AccountForm({
         },
       );
 
-      const data = (await response.json()) as { success?: boolean; error?: string };
+      const data = (await response.json()) as {
+        success?: boolean;
+        error?: string;
+        issues?: Array<{ path: Array<string | number>; message: string }>;
+      };
+
       if (!response.ok || !data.success) {
         setError(data.error ?? "Gagal menyimpan stok.");
+        setFieldErrors(
+          (data.issues ?? []).map(
+            (issue) => `${issue.path.join(".") || "form"}: ${issue.message}`,
+          ),
+        );
         return;
       }
 
@@ -426,9 +458,16 @@ export function AccountForm({
       </section>
 
       {error ? (
-        <p className="rounded-lg border border-accent-danger/40 bg-accent-danger/10 p-3 text-sm text-accent-danger">
-          {error}
-        </p>
+        <div className="rounded-lg border border-accent-danger/40 bg-accent-danger/10 p-3 text-sm text-accent-danger">
+          <p>{error}</p>
+          {fieldErrors.length > 0 ? (
+            <ul className="mt-2 list-disc space-y-0.5 pl-5 text-xs">
+              {fieldErrors.map((detail) => (
+                <li key={detail}>{detail}</li>
+              ))}
+            </ul>
+          ) : null}
+        </div>
       ) : null}
 
       <div className="flex flex-wrap items-center gap-3">
