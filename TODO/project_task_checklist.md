@@ -18,9 +18,9 @@
   - [x] Set `ADMIN_JWT_SECRET` & Admin credentials.
   - [x] Set Discord Webhook URL & Telegram Bot Token / Chat ID.
 
-- [ ] **Database & ORM Setup**
-  - [ ] Setup Prisma ORM / Drizzle ORM.
-  - [ ] Create initial migration scripts based on `08_data_architecture_and_erd.md`.
+- [x] **Database & ORM Setup**
+  - [x] Setup Prisma ORM / Drizzle ORM.
+  - [x] Create initial migration scripts based on `08_data_architecture_and_erd.md`.
 
 ---
 

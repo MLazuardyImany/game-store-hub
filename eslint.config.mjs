@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Hasil generate & cache tooling lokal:
+    "src/generated/**",
+    ".appdata/**",
+    ".npm-cache/**",
   ]),
 ]);
 

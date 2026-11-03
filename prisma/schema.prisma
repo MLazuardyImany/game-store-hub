@@ -1,0 +1,148 @@
+// =====================================================================
+// Skema database — Game Store Hub
+//
+// Sumber acuan: PRD 08 (ERD & skema tabel), PRD 06 (admin), PRD 09,
+// ARCHITECTURE §2, SKILL §4.
+//
+// Catatan desain:
+// 1. Nama tabel & kolom di PostgreSQL memakai snake_case sesuai ERD
+//    (@@map / @map), sedangkan model Prisma memakai PascalCase.
+// 2. Harga disimpan sebagai DECIMAL (bukan float) agar tidak ada galat
+//    pembulatan Rupiah — AGENTS.md Rule 1.
+// 3. Spesifikasi akun disimpan sebagai JSONB supaya admin bisa menambah
+//    pasangan key-value tanpa migrasi — SKILL.md §4.
+// 4. Tidak ada tabel `orders` / pembayaran: PRD 01 menetapkan payment
+//    gateway dan penjadwalan joki di luar cakupan MVP. Minat beli pembeli
+//    direkam pada `inquiry_logs` saat CTA diklik.
+// 5. `admin_users` tidak ada di ERD, tetapi dibutuhkan PRD 06 §1 (login
+//    admin dengan password ter-hash Bcrypt).
+// =====================================================================
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/// Status ketersediaan stok (ERD: 'READY' | 'BOOKED' | 'SOLD').
+/// Di UI, SOLD ditampilkan sebagai badge merah "TERJUAL".
+enum AccountStatus {
+  READY
+  BOOKED
+  SOLD
+}
+
+/// Kanal CTA yang diklik pembeli (PRD 04 §3, PRD 09).
+/// Disimpan agar admin tahu kanal mana yang paling menghasilkan.
+enum InquiryChannel {
+  WHATSAPP
+  TELEGRAM
+  DISCORD
+}
+
+/// Kategori game (ERD: tabel `games`).
+model Game {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String   @db.VarChar(100)
+  slug      String   @unique @db.VarChar(100)
+  iconUrl   String?  @map("icon_url") @db.VarChar(255)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  accounts      Account[]
+  boostingRates BoostingRate[]
+
+  @@index([name])
+  @@map("games")
+}
+
+/// Stok akun game yang dijual (ERD: tabel `accounts`).
+model Account {
+  id          String        @id @default(uuid()) @db.Uuid
+  stockId     String        @unique @map("stock_id") @db.VarChar(50)
+  gameId      String        @map("game_id") @db.Uuid
+  title       String        @db.VarChar(255)
+  priceIdr    Decimal       @map("price_idr") @db.Decimal(12, 2)
+  status      AccountStatus @default(READY)
+  specsJson   Json          @map("specs_json") @db.JsonB
+  description String?
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+
+  game        Game           @relation(fields: [gameId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  images      AccountImage[]
+  inquiryLogs InquiryLog[]
+
+  /// Katalog per game + filter status.
+  @@index([gameId, status])
+  /// Filter rentang harga & sorting harga.
+  @@index([status, priceIdr])
+  /// Sorting "Terbaru" (default katalog).
+  @@index([createdAt(sort: Desc)])
+  @@map("accounts")
+}
+
+/// Screenshot akun di Cloudflare R2 (ERD: tabel `account_images`).
+model AccountImage {
+  id           String   @id @default(uuid()) @db.Uuid
+  accountId    String   @map("account_id") @db.Uuid
+  r2ImageUrl   String   @map("r2_image_url") @db.VarChar(255)
+  isPrimary    Boolean  @default(false) @map("is_primary")
+  displayOrder Int      @default(0) @map("display_order")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([accountId, displayOrder])
+  @@map("account_images")
+}
+
+/// Matriks tarif jasa boosting per game (ERD: tabel `boosting_rates`).
+/// Satu baris = harga per unit (bintang/level) untuk satu segmen rank.
+model BoostingRate {
+  id              String   @id @default(uuid()) @db.Uuid
+  gameId          String   @map("game_id") @db.Uuid
+  fromRank        String   @map("from_rank") @db.VarChar(50)
+  toRank          String   @map("to_rank") @db.VarChar(50)
+  pricePerUnitIdr Decimal  @map("price_per_unit_idr") @db.Decimal(10, 2)
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  game Game @relation(fields: [gameId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  /// Satu kombinasi rank awal → tujuan hanya boleh punya satu tarif.
+  @@unique([gameId, fromRank, toRank])
+  @@index([gameId])
+  @@map("boosting_rates")
+}
+
+/// Log klik CTA pembeli (ERD: tabel `inquiry_logs`).
+/// Dipakai untuk analytics "stok mana yang paling banyak diminati".
+model InquiryLog {
+  id        String         @id @default(uuid()) @db.Uuid
+  accountId String         @map("account_id") @db.Uuid
+  channel   InquiryChannel
+  createdAt DateTime       @default(now()) @map("created_at")
+
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([accountId, createdAt(sort: Desc)])
+  @@index([channel, createdAt])
+  @@map("inquiry_logs")
+}
+
+/// Kredensial dashboard admin (PRD 06 §1).
+/// Password disimpan sebagai hash Bcrypt, tidak pernah plaintext.
+model AdminUser {
+  id           String    @id @default(uuid()) @db.Uuid
+  username     String    @unique @db.VarChar(50)
+  passwordHash String    @map("password_hash") @db.VarChar(255)
+  lastLoginAt  DateTime? @map("last_login_at")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  @@map("admin_users")
+}

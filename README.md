@@ -51,6 +51,25 @@ src/
 └── styles/              # Stylesheet tambahan
 ```
 
+## Database & Migrasi (Prisma 7)
+
+- Skema: `prisma/schema.prisma` — tabel `games`, `accounts`, `account_images`, `boosting_rates`,
+  `inquiry_logs`, dan `admin_users`, plus enum `AccountStatus` & `InquiryChannel`.
+- `DATABASE_URL` dibaca dari `.env.local` melalui `prisma7.config.ts` (satu sumber env dengan Next.js).
+- Prisma 7 memakai **driver adapter** `@prisma/adapter-pg`; client singleton ada di `src/lib/db.ts`.
+- Client Prisma di-generate ke `src/generated/prisma` (tidak di-commit).
+
+| Perintah | Fungsi |
+| :--- | :--- |
+| `npm run db:generate` | Generate Prisma Client |
+| `npm run db:migrate` | Buat & terapkan migrasi (dev) |
+| `npm run db:deploy` | Terapkan migrasi yang ada (produksi/CI) |
+| `npm run db:status` | Cek status migrasi terhadap database |
+| `npm run db:studio` | Buka Prisma Studio |
+
+Migrasi awal sudah tersedia di `prisma/migrations/*_init/migration.sql`. Setelah `DATABASE_URL`
+menunjuk database yang hidup, jalankan `npm run db:deploy` (atau `db:migrate` untuk development).
+
 ## Konvensi yang wajib diikuti
 
 1. **Mata uang:** angka disimpan sebagai numerik di DB, ditampilkan lewat `Intl.NumberFormat("id-ID")` → `Rp 750.000`.
@@ -64,5 +83,6 @@ Dokumen acuan lengkap ada di `PRD/`, `ARCHITECTURE/`, `AGENTS/`, `SKILL/`, `WORK
 
 ## Status
 
-Fase 1 (setup repositori) selesai: Next.js App Router + TypeScript, Tailwind v4 dengan token tema gelap,
-paket esensial terpasang, dan konfigurasi environment terdokumentasi.
+Fase 1 (setup repositori & environment) selesai: Next.js App Router + TypeScript, Tailwind v4 dengan
+token tema gelap, paket esensial, konfigurasi environment, serta skema Prisma + migrasi awal.
+Langkah berikutnya: seed data awal dan helper backend (R2, format Rupiah, CTA, webhook).
