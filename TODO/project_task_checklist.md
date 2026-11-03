@@ -26,15 +26,15 @@
 
 ## 🗄️ Phase 2: Core Helpers & Backend Services
 
-- [ ] **Cloudflare R2 Integration (`src/lib/r2.ts`)**
-  - [ ] Build S3 client initializer for R2.
-  - [ ] Create server-side WebP image compression helper using `sharp`.
-  - [ ] Build upload helper function returning public Cloudflare R2 URLs (`r2_image_url`).
+- [x] **Cloudflare R2 Integration (`src/lib/r2.ts`)**
+  - [x] Build S3 client initializer for R2.
+  - [x] Create server-side WebP image compression helper using `sharp`.
+  - [x] Build upload helper function returning public Cloudflare R2 URLs (`r2_image_url`).
 
-- [ ] **Formatting & Utility Modules (`src/lib/currency.ts`, `src/lib/cta.ts`)**
-  - [ ] Build IDR Rupiah formatter (`Intl.NumberFormat('id-ID')`).
-  - [ ] Create URL encoder for WhatsApp (`wa.me/?text=...`) and Telegram (`t.me/?text=...`).
-  - [ ] Implement asynchronous Discord Embed & Telegram Bot Webhook trigger functions.
+- [x] **Formatting & Utility Modules (`src/lib/currency.ts`, `src/lib/cta.ts`)**
+  - [x] Build IDR Rupiah formatter (`Intl.NumberFormat('id-ID')`).
+  - [x] Create URL encoder for WhatsApp (`wa.me/?text=...`) and Telegram (`t.me/?text=...`).
+  - [x] Implement asynchronous Discord Embed & Telegram Bot Webhook trigger functions.
 
 - [x] **Database Seed Script (`prisma/seed.ts`)**
   - [x] Seed initial game categories (Mobile Legends, Valorant, Genshin Impact, Free Fire).
@@ -45,53 +45,53 @@
 
 ## 🌐 Phase 3: Guest Buyer Frontend UI
 
-- [ ] **Global Navigation & Layout**
-  - [ ] Header / Sticky Navbar (Logo, Game Links, Search Bar, Boosting Link).
-  - [ ] Footer with warranty notice, terms, and social links.
+- [x] **Global Navigation & Layout**
+  - [x] Header / Sticky Navbar (Logo, Game Links, Search Bar, Boosting Link).
+  - [x] Footer with warranty notice, terms, and social links.
 
-- [ ] **Home & Catalog Listing (`/` and `/catalog/[game_slug]`)**
-  - [ ] Game Category Selector Grid (Cards with stock badges).
-  - [ ] Search input & Filter Bar (Min/Max Price in IDR, Status, Sort dropdown).
-  - [ ] Account Stock Card Grid Component:
-    - [ ] Display primary R2 thumbnail image.
-    - [ ] Display IDR price formatted (`Rp 750.000`).
-    - [ ] Implement Grayscale overlay + **SOLD OUT / TERJUAL** red badge for unavailable stocks.
+- [x] **Home & Catalog Listing (`/` and `/catalog/[game_slug]`)**
+  - [x] Game Category Selector Grid (Cards with stock badges).
+  - [x] Search input & Filter Bar (Min/Max Price in IDR, Status, Sort dropdown).
+  - [x] Account Stock Card Grid Component:
+    - [x] Display primary R2 thumbnail image.
+    - [x] Display IDR price formatted (`Rp 750.000`).
+    - [x] Implement Grayscale overlay + **SOLD OUT / TERJUAL** red badge for unavailable stocks.
 
-- [ ] **Account Detail Page (`/account/[stock_id]`)**
-  - [ ] Image Gallery with Lightbox Modal (Pinch-to-zoom & mobile swipe support).
-  - [ ] Structured Specs Table (Rank, Skins, Heroes, Binding status).
-  - [ ] Multi-channel Direct CTA Buttons ("Beli via WhatsApp", "Order Telegram", "Discord").
-  - [ ] Mobile Sticky Bottom CTA Bar (visible on screen resolution < 768px).
-  - [ ] Dynamic Open Graph Meta Tags (`og:image`, `og:title`, `og:description`) using R2 images for WhatsApp link previews.
+- [x] **Account Detail Page (`/account/[stock_id]`)**
+  - [x] Image Gallery with Lightbox Modal (Pinch-to-zoom & mobile swipe support).
+  - [x] Structured Specs Table (Rank, Skins, Heroes, Binding status).
+  - [x] Multi-channel Direct CTA Buttons ("Beli via WhatsApp", "Order Telegram", "Discord").
+  - [x] Mobile Sticky Bottom CTA Bar (visible on screen resolution < 768px).
+  - [x] Dynamic Open Graph Meta Tags (`og:image`, `og:title`, `og:description`) using R2 images for WhatsApp link previews.
 
-- [ ] **Interactive Boosting Calculator Page (`/boosting`)**
-  - [ ] Game Selector Tabs.
-  - [ ] Rank Selector dropdowns (Start Tier $\rightarrow$ Target Tier).
-  - [ ] Add-ons checkboxes (Express service +15%, Request Hero +10%, Mabar +20%).
-  - [ ] Real-time IDR Price calculation logic.
-  - [ ] "Pesan Joki via WA" CTA button with pre-filled encoded order details.
+- [x] **Interactive Boosting Calculator Page (`/boosting`)**
+  - [x] Game Selector Tabs.
+  - [x] Rank Selector dropdowns (Start Tier $\rightarrow$ Target Tier).
+  - [x] Add-ons checkboxes (Express service +15%, Request Hero +10%, Mabar +20%).
+  - [x] Real-time IDR Price calculation logic.
+  - [x] "Pesan Joki via WA" CTA button with pre-filled encoded order details.
 
 ---
 
 ## 🔐 Phase 4: Admin Dashboard (`/admin`)
 
-- [ ] **Admin Authentication**
-  - [ ] Protected Login Page (`/admin/login`) with Rate Limiting (max 5 attempts per 15 min).
-  - [ ] JWT / Session authentication middleware protecting `/admin/*` routes.
+- [x] **Admin Authentication**
+  - [x] Protected Login Page (`/admin/login`) with Rate Limiting (max 5 attempts per 15 min).
+  - [x] JWT / Session authentication middleware protecting `/admin/*` routes.
 
-- [ ] **Stock Account Management (`/admin/accounts`)**
-  - [ ] Stock Account List Table with Quick Status Toggle (`READY` $\leftrightarrow$ `SOLD OUT`).
-  - [ ] Create / Edit Stock Form:
-    - [ ] Dynamic Key-Value builder for specs (`Level`, `Skins`, `Win Rate`).
-    - [ ] Drag-and-drop Multi-Image Upload field directly pushing WebP images to Cloudflare R2.
-    - [ ] Set Primary Thumbnail selector.
+- [x] **Stock Account Management (`/admin/accounts`)**
+  - [x] Stock Account List Table with Quick Status Toggle (`READY` $\leftrightarrow$ `SOLD OUT`).
+  - [x] Create / Edit Stock Form:
+    - [x] Dynamic Key-Value builder for specs (`Level`, `Skins`, `Win Rate`).
+    - [x] Drag-and-drop Multi-Image Upload field directly pushing WebP images to Cloudflare R2.
+    - [x] Set Primary Thumbnail selector.
 
-- [ ] **Boosting Rate & Category Management**
-  - [ ] CRUD interface for Game Categories & Logos.
-  - [ ] Pricing Matrix editor for boosting rates per tier.
+- [x] **Boosting Rate & Category Management**
+  - [x] CRUD interface for Game Categories & Logos.
+  - [x] Pricing Matrix editor for boosting rates per tier.
 
-- [ ] **Inquiry Click Analytics (`/admin/analytics`)**
-  - [ ] Basic log counter showing which stock accounts received the most CTA button clicks.
+- [x] **Inquiry Click Analytics (`/admin/analytics`)**
+  - [x] Basic log counter showing which stock accounts received the most CTA button clicks.
 
 ---
 
@@ -105,7 +105,7 @@
   - [ ] Check Cloudflare R2 bucket storage usage and WebP image delivery speeds.
 
 - [ ] **Performance & Security Audit**
-  - [ ] Sanitize all admin form inputs with Zod schemas.
+  - [x] Sanitize all admin form inputs with Zod schemas.
   - [ ] Verify PageSpeed / Lighthouse performance score (>90 on Mobile).
 
 ---
