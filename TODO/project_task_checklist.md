@@ -12,11 +12,11 @@
   - [x] Configure Tailwind CSS with the Dark Gaming Color Palette (`#0F172A` Slate, `#1E293B` Charcoal, `#06B6D4` Cyan, `#10B981` Emerald).
   - [x] Install essential packages (`lucide-react`, `@aws-sdk/client-s3`, `sharp`, `clsx`, `tailwind-merge`, `zod`).
 
-- [ ] **Environment Configuration (`.env.local`)**
-  - [ ] Set `DATABASE_URL` (PostgreSQL / MySQL).
-  - [ ] Set Cloudflare R2 credentials (`CLOUDFLARE_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`, `R2_PUBLIC_DOMAIN`).
-  - [ ] Set `ADMIN_JWT_SECRET` & Admin credentials.
-  - [ ] Set Discord Webhook URL & Telegram Bot Token / Chat ID.
+- [x] **Environment Configuration (`.env.local`)**
+  - [x] Set `DATABASE_URL` (PostgreSQL / MySQL).
+  - [x] Set Cloudflare R2 credentials (`CLOUDFLARE_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`, `R2_PUBLIC_DOMAIN`).
+  - [x] Set `ADMIN_JWT_SECRET` & Admin credentials.
+  - [x] Set Discord Webhook URL & Telegram Bot Token / Chat ID.
 
 - [ ] **Database & ORM Setup**
   - [ ] Setup Prisma ORM / Drizzle ORM.
