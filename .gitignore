@@ -52,3 +52,24 @@ next-env.d.ts
 
 # Archify — artefak diagram hasil generate (dibuat ulang lewat skill archify)
 /.archify/
+
+# Ignore AI Context & Documentation
+AGENTS
+AGENTS/
+AGENTS.md
+ARCHITECTURE
+ARCHITECTURE/
+ARCHITECTURE.md
+PRD
+PRD/
+PRD.md
+SKILL
+SKILL/
+SKILL.md
+SKILLS.md
+TODO
+TODO/
+TODO.md
+WORKFLOW
+WORKFLOW/
+WORKFLOW.md

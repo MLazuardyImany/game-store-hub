@@ -1,209 +1,210 @@
 # 🎮 Game Store Hub
 
-Katalog penjualan akun game **dan** kalkulator jasa boosting (joki) untuk pasar Indonesia.
-Pembeli menjelajah tanpa perlu mendaftar, melihat screenshot asli tiap stok, menghitung
-estimasi biaya joki dalam Rupiah secara *real-time*, lalu diarahkan langsung ke
-WhatsApp / Telegram / Discord dengan pesan yang sudah terisi otomatis.
+A catalog for selling game accounts **and** a boosting (rank-up service) price calculator,
+built for the Indonesian market. Buyers browse without signing up, inspect real screenshots
+of each stock, calculate boosting costs in IDR in real time, and are handed off directly to
+WhatsApp / Telegram / Discord with a pre-filled message.
 
-Dibangun dengan Next.js 16 (App Router), TypeScript strict, Tailwind CSS v4, PostgreSQL,
-Prisma 7, dan Cloudflare R2 untuk penyimpanan screenshot.
+Built with Next.js 16 (App Router), strict TypeScript, Tailwind CSS v4, PostgreSQL,
+Prisma 7, and Cloudflare R2 for screenshot storage.
 
 ---
 
 ## 📸 Preview
 
-### Landing page & katalog
-![Landing page Game Store Hub](docs/screenshots/landing-catalog.png)
+### Landing page & catalog
+![Game Store Hub landing page](docs/screenshots/landing-catalog.png)
 
-### Katalog stok dengan filter harga
-![Katalog stok akun](docs/screenshots/katalog-stok.png)
+### Stock catalog with price filters
+![Account stock catalog](docs/screenshots/katalog-stok.png)
 
-### Detail akun: galeri, spesifikasi, dan CTA multi-kanal
-![Detail akun](docs/screenshots/account-detail.png)
+### Account detail: gallery, specs, and multi-channel CTA
+![Account detail](docs/screenshots/account-detail.png)
 
-### Kalkulator boosting real-time
-![Kalkulator boosting](docs/screenshots/boosting-calculator.png)
+### Real-time boosting calculator
+![Boosting calculator](docs/screenshots/boosting-calculator.png)
 
-### Dashboard admin
-![Dashboard admin](docs/screenshots/admin-dashboard.png)
+### Admin dashboard
+![Admin dashboard](docs/screenshots/admin-dashboard.png)
 
 ---
 
-## ✨ Fitur Utama
+## ✨ Key Features
 
-| Fitur | Keterangan |
+| Feature | Description |
 | :--- | :--- |
-| **Katalog Stok** | Grid akun dengan thumbnail, harga IDR, badge status (`READY` / `BOOKED` / `TERJUAL`), filter game, rentang harga, status, pencarian, sorting, dan paginasi — semuanya lewat URL agar bisa dibagikan. |
-| **Detail Akun** | Galeri screenshot dengan lightbox (zoom, keyboard, swipe), tabel spesifikasi dinamis (JSONB), catatan penjual, serta **sticky CTA bar** di layar mobile. |
-| **Direct CTA WhatsApp / Telegram / Discord** | Deep-link `wa.me` / `t.me` dengan pesan ter-encode berisi ID stok, judul, dan harga. Klik CTA tercatat di database lalu memicu webhook **tanpa menahan redirect** pembeli. |
-| **Boosting Calculator** | Pilih game, rank awal, rank target, dan add-on (Express +15%, Request Hero +10%, Mabar +20%). Total dihitung seketika memakai penjumlahan tarif sekuensial berbasis `rank_order`. |
-| **Cloudflare R2 Integration** | Upload admin dikompres ke **WebP** (maks 1920px, kualitas 80%) oleh `sharp` sebelum dikirim ke R2 via S3 SDK. Database hanya menyimpan URL publik. |
-| **Admin Dashboard** | Login ber-Bcrypt + sesi HMAC, rate limit 5 percobaan/15 menit, CRUD stok (specs builder, multi-upload, pemilihan thumbnail utama), CRUD kategori, editor rank & tarif, serta analitik klik CTA. |
-| **Webhook Alerts** | Notifikasi Discord Embed dan Telegram Bot setiap kali calon pembeli menekan tombol pesan. Dikirim *best effort* — kegagalan webhook tidak pernah menggagalkan transaksi. |
+| **Stock Catalog** | Account grid with thumbnails, IDR prices, status badges (`READY` / `BOOKED` / `SOLD`), plus game, price-range, and status filters, search, sorting, and pagination — all encoded in the URL so results are shareable. |
+| **Account Detail** | Screenshot gallery with a lightbox (zoom, keyboard, swipe), a dynamic specification table (JSONB), seller notes, and a **sticky CTA bar** on mobile viewports. |
+| **Direct WhatsApp / Telegram / Discord CTA** | `wa.me` / `t.me` deep links carrying a URL-encoded message with the stock ID, title, and price. Each click is logged and triggers a webhook **without blocking the buyer's redirect**. |
+| **Boosting Calculator** | Pick a game, starting rank, target rank, and add-ons (Express +15%, Request Hero +10%, Play-with-booster +20%). The total updates instantly using sequential per-tier rates ordered by `rank_order`. |
+| **Cloudflare R2 Integration** | Admin uploads are compressed to **WebP** (max 1920px, quality 80%) by `sharp` before being sent to R2 through the S3 SDK. The database only stores public URLs. |
+| **Admin Dashboard** | Bcrypt login with HMAC sessions, rate limited to 5 attempts per 15 minutes, stock CRUD (specs builder, multi-upload, primary thumbnail), category CRUD, rank & rate editor, and CTA click analytics. |
+| **Webhook Alerts** | Discord embed and Telegram Bot notifications whenever a prospective buyer presses a contact button. Delivered on a best-effort basis — a failing webhook never breaks the purchase flow. |
 
 ---
 
 ## 🧰 Tech Stack
 
-| Lapisan | Teknologi |
+| Layer | Technology |
 | :--- | :--- |
 | Framework | **Next.js 16** (App Router, Server Components, Route Handlers) |
-| Bahasa | **TypeScript** (strict, tanpa `any` implisit) |
-| Styling | **Tailwind CSS v4** dengan design token `@theme` (tema gelap permanen) |
+| Language | **TypeScript** (strict, no implicit `any`) |
+| Styling | **Tailwind CSS v4** with `@theme` design tokens (permanent dark theme) |
 | Database | **PostgreSQL 18** |
-| ORM | **Prisma 7** + `@prisma/adapter-pg` (driver adapter, query engine Rust sudah dihapus) |
-| Object Storage | **Cloudflare R2** (`@aws-sdk/client-s3`) + `sharp` untuk konversi WebP |
-| Validasi | **Zod** (semua input admin) |
-| Autentikasi | JWT HS256 buatan sendiri + cookie `httpOnly`, password Bcrypt (`bcryptjs`) |
-| Ikon | `lucide-react` |
+| ORM | **Prisma 7** + `@prisma/adapter-pg` (driver adapter; the Rust query engine was removed in v7) |
+| Object Storage | **Cloudflare R2** (`@aws-sdk/client-s3`) + `sharp` for WebP conversion |
+| Validation | **Zod** (every admin input) |
+| Authentication | Hand-rolled HS256 JWT + `httpOnly` cookie, Bcrypt passwords (`bcryptjs`) |
+| Icons | `lucide-react` |
 
 ---
 
-## 🚀 Panduan Instalasi & Setup Lokal
+## 🚀 Installation & Local Setup
 
-### 1. Prasyarat
+### 1. Prerequisites
 
-- Node.js **20+** (diuji pada Node 24)
-- PostgreSQL **14+** yang berjalan lokal
-- Akun Cloudflare R2 (opsional — hanya diperlukan untuk fitur upload)
+- Node.js **20+** (tested on Node 24)
+- A running local PostgreSQL **14+**
+- A Cloudflare R2 account (optional — only needed for uploads)
 
 ### 2. Clone & install
 
 ```bash
-git clone <url-repo-anda> game-store-hub
+git clone https://github.com/MLazuardyImany/game-store-hub.git
 cd game-store-hub
 npm install
 ```
 
-### 3. Siapkan environment
+### 3. Configure the environment
 
 ```bash
 cp .env.example .env.local
 ```
 
-Buka `.env.local` lalu isi minimal:
+Open `.env.local` and fill in at least:
 
-| Variabel | Wajib | Contoh |
+| Variable | Required | Example |
 | :--- | :---: | :--- |
 | `DATABASE_URL` | ✅ | `postgresql://postgres:password@localhost:5432/gamestore_db?schema=public` |
-| `ADMIN_JWT_SECRET` | ✅ | string acak ≥ 32 karakter |
+| `ADMIN_JWT_SECRET` | ✅ | random string, 32+ characters |
 | `ADMIN_USERNAME` | ✅ | `admin` |
-| `ADMIN_PASSWORD_HASH` | ✅ | hash Bcrypt — lihat catatan di bawah |
-| `CLOUDFLARE_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`, `R2_PUBLIC_DOMAIN` | untuk upload | — |
-| `DISCORD_WEBHOOK_URL`, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` | untuk notifikasi | — |
-| `NEXT_PUBLIC_WHATSAPP_NUMBER`, `NEXT_PUBLIC_TELEGRAM_USERNAME`, `NEXT_PUBLIC_DISCORD_URL` | ✅ | kontak penjual untuk tombol CTA |
+| `ADMIN_PASSWORD_HASH` | ✅ | Bcrypt hash — see the note below |
+| `CLOUDFLARE_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`, `R2_PUBLIC_DOMAIN` | for uploads | — |
+| `DISCORD_WEBHOOK_URL`, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` | for notifications | — |
+| `NEXT_PUBLIC_WHATSAPP_NUMBER`, `NEXT_PUBLIC_TELEGRAM_USERNAME`, `NEXT_PUBLIC_DISCORD_URL` | ✅ | seller contact channels used by the CTA buttons |
 
-> **Penting saat membuat hash password:** hash Bcrypt diawali `$2b$12$…`, sedangkan
-> loader env Next.js meng-expand pola `$VAR`. Tulis setiap `$` sebagai `\$`, jika tidak
-> nilainya akan terbaca kosong.
+> **Important when generating the password hash:** a Bcrypt hash starts with `$2b$12$…`,
+> and the Next.js env loader expands `$VAR` patterns. Escape every `$` as `\$`, otherwise
+> the value is read as an empty string.
 >
 > ```bash
-> node -e "console.log(require('bcryptjs').hashSync('PasswordAnda', 12))"
-> # lalu di .env.local:  ADMIN_PASSWORD_HASH="\$2b\$12\$hasil..."
+> node -e "console.log(require('bcryptjs').hashSync('YourPassword', 12))"
+> # then in .env.local:  ADMIN_PASSWORD_HASH="\$2b\$12\$result..."
 > ```
 
-### 4. Siapkan database
+### 4. Prepare the database
 
 ```bash
-# buat database (jika belum ada)
-createdb -U postgres gamestore_db      # Windows: & "C:\Program Files\PostgreSQL\18\bin\createdb.exe" -U postgres gamestore_db
+# create the database if it does not exist yet
+createdb -U postgres gamestore_db
+# Windows: & "C:\Program Files\PostgreSQL\18\bin\createdb.exe" -U postgres gamestore_db
 
-# terapkan migrasi + isi data contoh
+# apply migrations and load sample data
 npm run db:deploy
 npm run db:seed
 ```
 
-### 5. Jalankan
+### 5. Run the app
 
 ```bash
 npm run dev
 ```
 
-- Toko: <http://localhost:3000>
-- Katalog: <http://localhost:3000/catalog>
-- Kalkulator boosting: <http://localhost:3000/boosting>
+- Storefront: <http://localhost:3000>
+- Catalog: <http://localhost:3000/catalog>
+- Boosting calculator: <http://localhost:3000/boosting>
 - Admin: <http://localhost:3000/admin/login>
 
 ---
 
-## 📁 Struktur Folder
+## 📁 Project Structure
 
 ```
 game-store-hub/
 ├── prisma/
-│   ├── schema.prisma            # 6 model + 2 enum (sumber kebenaran data)
-│   ├── migrations/              # SQL migrasi (diterapkan dengan db:deploy)
-│   └── seed.ts                  # data contoh idempotent
+│   ├── schema.prisma            # 6 models + 2 enums (data source of truth)
+│   ├── migrations/              # SQL migrations (applied with db:deploy)
+│   └── seed.ts                  # idempotent sample data
 ├── public/
-│   └── mock/                    # aset SVG contoh (pengganti sementara R2)
+│   └── mock/                    # placeholder SVG assets (stand-ins for R2)
 ├── docs/
-│   └── screenshots/             # gambar dokumentasi README
+│   └── screenshots/             # documentation images referenced by this README
 ├── scripts/
-│   ├── capture-screenshots.mjs  # ambil screenshot otomatis (Playwright)
-│   ├── capture-admin.mjs        # screenshot dashboard (perlu login)
-│   ├── archify-serve.mjs        # server statis diagram arsitektur
-│   └── archify-watch.mjs        # pemantau drift arsitektur
+│   ├── capture-screenshots.mjs  # automated screenshots (Playwright)
+│   ├── capture-admin.mjs        # dashboard screenshot (requires login)
+│   ├── archify-serve.mjs        # static server for architecture diagrams
+│   └── archify-watch.mjs        # architecture drift watcher
 ├── src/
 │   ├── app/
 │   │   ├── page.tsx                     # landing page
-│   │   ├── catalog/                     # /catalog dan /catalog/[game_slug]
-│   │   ├── account/[stock_id]/          # detail akun
-│   │   ├── boosting/                    # kalkulator joki
-│   │   ├── admin/                       # login + dashboard (terproteksi)
-│   │   └── api/v1/                      # route handlers publik & admin
+│   │   ├── catalog/                     # /catalog and /catalog/[game_slug]
+│   │   ├── account/[stock_id]/          # account detail
+│   │   ├── boosting/                    # boosting calculator
+│   │   ├── admin/                       # login + dashboard (protected)
+│   │   └── api/v1/                      # public and admin route handlers
 │   ├── components/
 │   │   ├── layout/                      # header & footer
-│   │   ├── catalog/                     # kartu, filter, galeri, CTA
-│   │   ├── boosting/                    # kalkulator
-│   │   └── admin/                       # form stok, toggle status, logout
+│   │   ├── catalog/                     # cards, filters, gallery, CTA
+│   │   ├── boosting/                    # calculator
+│   │   └── admin/                       # stock form, status toggle, logout
 │   ├── lib/                             # r2, currency, cta, webhook, auth, queries, boosting
-│   └── generated/prisma/                # Prisma Client (di-generate, tidak di-commit)
-├── prisma7.config.ts            # konfigurasi Prisma CLI (membaca .env.local)
-├── next.config.ts               # remotePatterns gambar R2
+│   └── generated/prisma/                # generated Prisma Client (not committed)
+├── prisma7.config.ts            # Prisma CLI config (reads .env.local)
+├── next.config.ts               # remotePatterns for R2 images
 └── package.json
 ```
 
 ---
 
-## 📜 Skrip npm
+## 📜 npm Scripts
 
-| Perintah | Fungsi |
+| Command | Purpose |
 | :--- | :--- |
-| `npm run dev` | Server pengembangan (Turbopack) |
-| `npm run build` | Build produksi |
-| `npm run start` | Menjalankan hasil build |
+| `npm run dev` | Development server (Turbopack) |
+| `npm run build` | Production build |
+| `npm run start` | Serve the production build |
 | `npm run lint` | ESLint (flat config) |
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm run db:generate` | Generate Prisma Client |
-| `npm run db:migrate` | Buat & terapkan migrasi (dev) |
-| `npm run db:deploy` | Terapkan migrasi yang ada |
-| `npm run db:seed` | Isi data contoh |
-| `npm run db:studio` | Buka Prisma Studio |
-| `npm run arch:serve` / `arch:watch` | Dashboard & pemantau diagram arsitektur |
+| `npm run db:migrate` | Create and apply a migration (development) |
+| `npm run db:deploy` | Apply existing migrations |
+| `npm run db:seed` | Load sample data |
+| `npm run db:studio` | Open Prisma Studio |
+| `npm run arch:serve` / `arch:watch` | Architecture diagram dashboard and drift watcher |
 
 ---
 
-## 🗄️ Model Data
+## 🗄️ Data Model
 
-`games` → `ranks` → `boosting_rates` (tarif per segmen rank, referensi FK)
-`games` → `accounts` → `account_images`, dan `accounts` → `inquiry_logs`
-`admin_users` menyimpan kredensial admin.
+`games` → `ranks` → `boosting_rates` (per-tier rates referencing ranks through foreign keys)
+`games` → `accounts` → `account_images`, and `accounts` → `inquiry_logs`
+`admin_users` stores admin credentials.
 
-Harga disimpan `DECIMAL`, spesifikasi akun dalam `JSONB`, dan enum `AccountStatus`
-(`READY` / `BOOKED` / `SOLD`) serta `InquiryChannel` (`WHATSAPP` / `TELEGRAM` / `DISCORD`).
-
----
-
-## 🔐 Catatan Keamanan
-
-- Pembeli **tidak perlu akun**; hanya `/admin` yang terproteksi sesi.
-- Semua input admin divalidasi Zod di server, bukan hanya di browser.
-- Session cookie `httpOnly` + `sameSite=lax`, otomatis `secure` di produksi.
-- `.env.local`, `node_modules`, `.next`, dan Prisma Client hasil generate tidak pernah di-commit.
+Prices use `DECIMAL`, account specifications are stored as `JSONB`, and the enums are
+`AccountStatus` (`READY` / `BOOKED` / `SOLD`) and `InquiryChannel`
+(`WHATSAPP` / `TELEGRAM` / `DISCORD`).
 
 ---
 
-## 📄 Lisensi
+## 🔐 Security Notes
 
-Proyek privat. Dokumen acuan produk tersedia di folder `PRD/`, `ARCHITECTURE/`,
-`AGENTS/`, `SKILL/`, `WORKFLOW/`, dan `TODO/`.
+- Buyers need **no account**; only `/admin` is protected by a session.
+- Every admin input is validated with Zod on the server, not only in the browser.
+- Session cookies are `httpOnly` + `sameSite=lax` and become `secure` in production.
+- `.env.local`, `node_modules`, `.next`, and the generated Prisma Client are never committed.
+
+---
+
+## 📄 License
+
+Private project.
